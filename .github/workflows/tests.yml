@@ -172,12 +172,28 @@ jobs:
       - name: Overview of the Python environment (pip list)
         run: pip list
 
+      - name: Restore pytest-ranking cache
+      id: restore-pytest-ranking-cache
+      if: always()
+      uses: actions/cache/restore@v4
+      with:
+        path: ${{ github.workspace }}/.pytest_cache/v/pytest_ranking_data
+        key: pytest-ranking-cache-${{ runner.os }}-${{ matrix.python }}
+      
       - name: Run tests
         # Enable this if we have failures on GEOS main
         # continue-on-error: ${{ matrix.geos == 'main' }}
         run: |
           python -c "import shapely; print(f'GEOS version: {shapely.geos_version_string}')"
-          pytest shapely/tests -r a --cov --cov-report term-missing ${{ matrix.extra_pytest_args }}
+          pytest shapely/tests -vv --durations=0 -r a --cov --cov-report term-missing ${{ matrix.extra_pytest_args }} --rank --rank-weight=0-1-0
+
+      - name: Save pytest-ranking cache
+      id: save-pytest-ranking-cache
+      if: always()
+      uses: actions/cache/save@v4
+      with:
+        path: ${{ github.workspace }}.pytest_cache/v/pytest_ranking_data
+        key: pytest-ranking-cache-${{ runner.os }}-${{ matrix.python }}-${{ github.run_id }}
 
       # Only run doctests on 1 runner (because of typographic differences in doctest results)
       - name: Run doctests
@@ -198,15 +214,15 @@ jobs:
         run: |
           coveralls --service=github || echo "!! intermittent coveralls failure"
 
-  coveralls:
-    name: Indicate completion to coveralls.io
-    needs: test
-    runs-on: ubuntu-latest
-    container: python:3-slim
-    steps:
-      - name: Finished
-        run: |
-          pip3 install --upgrade coveralls
-          coveralls --finish || echo "!! intermittent coveralls failure"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  # coveralls:
+  #   name: Indicate completion to coveralls.io
+  #   needs: test
+  #   runs-on: ubuntu-latest
+  #   container: python:3-slim
+  #   steps:
+  #     - name: Finished
+  #       run: |
+  #         pip3 install --upgrade coveralls
+  #         coveralls --finish || echo "!! intermittent coveralls failure"
+  #       env:
+  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

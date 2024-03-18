@@ -48,6 +48,7 @@ dependencies = [
 test = [
     "pytest",
     "pytest-cov",
+    "pytest-ranking==0.2.6",
 ]
 docs = [
     "numpydoc==1.1.*",
