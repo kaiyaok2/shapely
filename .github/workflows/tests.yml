@@ -169,6 +169,9 @@ jobs:
             pip install -e .
           fi
 
+      - name: Install pytest-ranking
+        run: pip install pytest-ranking==0.2.6
+
       - name: Overview of the Python environment (pip list)
         run: pip list
 
