@@ -173,12 +173,12 @@ jobs:
         run: pip list
 
       - name: Restore pytest-ranking cache
-      id: restore-pytest-ranking-cache
-      if: always()
-      uses: actions/cache/restore@v4
-      with:
-        path: ${{ github.workspace }}/.pytest_cache/v/pytest_ranking_data
-        key: pytest-ranking-cache-${{ runner.os }}-${{ matrix.python }}
+        id: restore-pytest-ranking-cache
+        if: always()
+        uses: actions/cache/restore@v4
+        with:
+          path: ${{ github.workspace }}/.pytest_cache/v/pytest_ranking_data
+          key: pytest-ranking-cache-${{ runner.os }}-${{ matrix.python }}
       
       - name: Run tests
         # Enable this if we have failures on GEOS main
@@ -188,12 +188,12 @@ jobs:
           pytest shapely/tests -vv --durations=0 -r a --cov --cov-report term-missing ${{ matrix.extra_pytest_args }} --rank --rank-weight=0-1-0
 
       - name: Save pytest-ranking cache
-      id: save-pytest-ranking-cache
-      if: always()
-      uses: actions/cache/save@v4
-      with:
-        path: ${{ github.workspace }}.pytest_cache/v/pytest_ranking_data
-        key: pytest-ranking-cache-${{ runner.os }}-${{ matrix.python }}-${{ github.run_id }}
+        id: save-pytest-ranking-cache
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: ${{ github.workspace }}.pytest_cache/v/pytest_ranking_data
+          key: pytest-ranking-cache-${{ runner.os }}-${{ matrix.python }}-${{ github.run_id }}
 
       # Only run doctests on 1 runner (because of typographic differences in doctest results)
       - name: Run doctests
