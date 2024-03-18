@@ -195,7 +195,7 @@ jobs:
         if: always()
         uses: actions/cache/save@v4
         with:
-          path: ${{ github.workspace }}.pytest_cache/v/pytest_ranking_data
+          path: ${{ github.workspace }}/.pytest_cache/v/pytest_ranking_data
           key: pytest-ranking-cache-${{ runner.os }}-${{ matrix.python }}-${{ github.run_id }}
 
       # Only run doctests on 1 runner (because of typographic differences in doctest results)
